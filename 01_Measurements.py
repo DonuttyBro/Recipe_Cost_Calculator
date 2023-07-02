@@ -36,10 +36,6 @@ def units(question, error):
             print(error)
 
 
-measurement_used = measurement_checker("What units are you measuring in? ", "Please enter kg, g, l or ml ...\n")
-alt_measurement_used = units("What units are you measuring in? ", "Please enter kg, g, l or ml ...\n")
-
-print(measurement_used)
-print(alt_measurement_used)
-
-
+for item in range(0,6):
+    measurement_used = units("What units are you measuring in? ", "Please enter kg, g, l or ml ...\n")
+    print("You said '{}'\n".format(measurement_used))
