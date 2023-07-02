@@ -10,7 +10,23 @@ def show_instructions():
     print('''\n
     ***** Instructions *****
 
-    (Insert Instructions Here)
+    Enter the recipe name
+
+    Enter the amount of serves
+
+    For each ingredient, enter ...
+    - The ingredient name
+    - The amount needed
+    - The amount bought
+    - The price
+    
+    When you have entered all the ingredients, type 'no' to quit.
+    
+    The program will then display the recipe details
+    including the ingredient amounts and costs.
+    
+    This information will also be automatically written to
+    a text file. The recipe name will be the text file name.
 
     ************************''')
 
@@ -99,7 +115,7 @@ if want_instructions == "yes":
 recipe_name = not_blank("\nRecipe Name: ", "\nThe recipe name cannot be blank")
 
 # How many serves
-serve_amount = num_check("\nHow many serves are you making: ", "\nMust be a whole number greater than 0.", int)
+serve_amount = num_check("\nHow many serves are you making: ", "\nMust be a number greater than 0.", float)
 
 more_ingredients = "yes"
 
@@ -123,7 +139,7 @@ while more_ingredients == "yes":
     needed_measurement_type = units("\nWhat are you measuring the needed amount in (kg, g, l, ml): ", "\nMust be kg, g, l, or ml.")
 
     # Get amount needed
-    amount_needed = num_check("\nHow much will you need: ", "\nMust be a whole number greater than 0.", int)
+    amount_needed = num_check("\nHow much will you need: ", "\nMust be a number greater than 0.", float)
 
     # Mathy stuff
     if needed_measurement_type == "kg" or needed_measurement_type == "l":
@@ -135,7 +151,7 @@ while more_ingredients == "yes":
     bought_measurement_type = units("\nWhat are you measuring the bought amount in (kg, g, l, ml): ", "\nMust be kg, g, l, or ml.")
 
     # Get amount bought
-    amount_bought = num_check("\nHow much are you buying: ", "\nMust be a whole number greater than 0.", int)
+    amount_bought = num_check("\nHow much are you buying: ", "\nMust be a number greater than 0.", float)
 
     # More Mathy Stuff
     if bought_measurement_type == "kg" or bought_measurement_type == "l":
