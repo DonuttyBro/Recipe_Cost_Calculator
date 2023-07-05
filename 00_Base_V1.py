@@ -1,6 +1,5 @@
 # Import Libraries
 import pandas
-import math
 
 
 # functions go here
@@ -16,6 +15,7 @@ def show_instructions():
 
     For each ingredient, enter ...
     - The ingredient name
+    - What it's measured in
     - The amount needed
     - The amount bought
     - The price
@@ -119,7 +119,6 @@ serve_amount = num_check("\nHow many serves are you making: ", "\nMust be a numb
 
 more_ingredients = "yes"
 
-ingredient_dict = {}
 ingredient_names = []
 ingredient_amounts_needed = []
 ingredient_amounts_bought = []
@@ -135,39 +134,61 @@ while more_ingredients == "yes":
     # Get ingredient name
     ingredient_name = not_blank("\nIngredient Name: ", "\nThe ingredient name cannot be blank")
 
-    # Get measurement type
-    needed_measurement_type = units("\nWhat are you measuring the needed amount in (kg, g, l, ml): ", "\nMust be kg, g, l, or ml.")
+    # Asks if the ingredient has measurements
+    any_measurement = yes_no("\nDoes this ingredient need measurements? ")
 
-    # Get amount needed
-    amount_needed = num_check("\nHow much will you need: ", "\nMust be a number greater than 0.", float)
+    if any_measurement == "yes":
 
-    # Mathy stuff
-    if needed_measurement_type == "kg" or needed_measurement_type == "l":
-        needed_how_much = amount_needed * 1000
-    else:
-        needed_how_much = amount_needed 
+        # Get measurement type
+        needed_measurement_type = units("\nWhat are you measuring the needed amount in (kg, g, l, ml): ", "\nMust be kg, g, l, or ml.")
 
-    # Bought measurement type
-    bought_measurement_type = units("\nWhat are you measuring the bought amount in (kg, g, l, ml): ", "\nMust be kg, g, l, or ml.")
+        # Get amount needed
+        amount_needed = num_check("\nHow much will you need: ", "\nMust be a number greater than 0.", float)
+        
+        # converts kg and l so they can be in equations with g and ml
+        if needed_measurement_type == "kg" or needed_measurement_type == "l":
+            needed_how_much = amount_needed * 1000
+        else:
+            needed_how_much = amount_needed 
 
-    # Get amount bought
-    amount_bought = num_check("\nHow much are you buying: ", "\nMust be a number greater than 0.", float)
+        # Bought measurement type
+        bought_measurement_type = units("\nWhat are you measuring the bought amount in (kg, g, l, ml): ", "\nMust be kg, g, l, or ml.")
 
-    # More Mathy Stuff
-    if bought_measurement_type == "kg" or bought_measurement_type == "l":
-        bought_how_much = amount_bought * 1000
-    else:
+        # Get amount bought
+        amount_bought = num_check("\nHow much are you buying: ", "\nMust be a number greater than 0.", float)
+
+        # converts kg and l so they can be in equations with g and ml
+        if bought_measurement_type == "kg" or bought_measurement_type == "l":
+            bought_how_much = amount_bought * 1000
+        else:
+            bought_how_much = amount_bought
+
+        # Gets the price of the amount bought
+        price = num_check("\nHow much does it cost: ", "\nMust be a number greater than 0", float)
+        fixed_price = currency(price)
+
+    elif any_measurement == "no":
+        
+        # Sets measurement type to none
+        needed_measurement_type = ""
+        bought_measurement_type = ""
+
+        # Get amount needed
+        amount_needed = num_check("\nHow many will you need: ", "\nMust be a number greater than 0.", float)
+        needed_how_much = amount_needed
+        # Get amount bought
+        amount_bought = num_check("\nHow many are you buying: ", "\nMust be a whole  number greater than 0.", int)
         bought_how_much = amount_bought
 
-    # Get price
-    price = num_check("\nHow much does it cost: ", "\nMust be a number greater than 0", float)
-    fixed_price = currency(price)
+        # Gets the price of the amount bought
+        price = num_check("\nHow much does it cost: ", "\nMust be a number greater than 0", float)
+        fixed_price = currency(price)
 
     # add measurement to amount
     needed_measurement = "{}{}".format(amount_needed, needed_measurement_type)
     bought_measurement = "{}{}".format(amount_bought, bought_measurement_type)
 
-    # Calculate overall costs
+    # Calculates overall costs
     overall_needed_bought = bought_how_much / needed_how_much
     price_overall = price / overall_needed_bought
     fixed_price_overall = currency(price_overall)
@@ -176,7 +197,7 @@ while more_ingredients == "yes":
     price_serve = price / needed_bought
     fixed_price_serve = currency(price_serve)
 
-    # Add items to lists
+    # Adds items to lists
     ingredient_names.append(ingredient_name)
     ingredient_amounts_needed.append(needed_measurement)
     ingredient_amounts_bought.append(bought_measurement)
@@ -191,6 +212,7 @@ while more_ingredients == "yes":
 
     more_ingredients = yes_no("\nAre there any more ingredients: ")
 
+# adds together numbers in lists for totals
 bought_overall = sum(bought_prices)
 fixed_bought_overall = currency(bought_overall)
 overall_serve = sum(ingredient_serve_prices)
@@ -198,6 +220,7 @@ fixed_overall_serve = currency(overall_serve)
 overall_all = sum(overall_prices)
 fixed_overall_all = currency(overall_all)
 
+# puts items in dictionaries
 ingredient_dict = {
     "Ingredient Name": ingredient_names,
     "Amount": ingredient_amounts_needed
@@ -213,6 +236,7 @@ price_dict = {
     "Ingredient Overall Price": fixed_overall_prices
 }
 
+# converts the dictionaries to data frames
 ingredient_frame = pandas.DataFrame(ingredient_dict)
 bought_frame = pandas.DataFrame(bought_dict)
 price_frame = pandas.DataFrame(price_dict)
@@ -221,6 +245,7 @@ ingredient_txt = pandas.DataFrame.to_string(ingredient_frame)
 bought_txt = pandas.DataFrame.to_string(bought_frame)
 price_txt = pandas.DataFrame.to_string(price_frame)
 
+# Sets up the titles in nicer formatting
 display_recipe_name = "**** {} ****".format(recipe_name)
 display_serve_amount = "Serves: {}".format(serve_amount)
 display_ingredient_list = "**** Ingredient Amounts ****"
@@ -230,23 +255,28 @@ display_bought_price_overall = "Overall Bought Price: {}".format(fixed_bought_ov
 display_overall_serve_price = "Overall Serve Price: {}".format(fixed_overall_serve)
 display_overall_price = "Overall Price: {}".format(fixed_overall_all)
 
+# Puts all the items in a list
 to_write = [display_recipe_name, display_serve_amount,display_ingredient_list ,ingredient_txt,display_bought_list , bought_txt, display_bought_price_overall,
             display_price_list ,price_txt, display_overall_serve_price, display_overall_price]
 
-# Write to file...
-# create file to hold data (add .txt extension)
-file_name = "{}.txt".format(recipe_name)
-text_file = open(file_name, "w+")
+# Asks if you want to write to file
+want_file = yes_no("\nDo you want to print this information to a file? ")
 
-# heading
-for item in to_write:
-    text_file.write(item)
-    text_file.write("\n\n")
+if want_file == "yes":
+    # Write to file...
+    # create file to hold data (add .txt extension)
+    file_name = "{}.txt".format(recipe_name)
+    text_file = open(file_name, "w+")
 
-# close file
-text_file.close()
+    # heading
+    for item in to_write:
+        text_file.write(item)
+        text_file.write("\n\n")
 
-# print stuff
+    # close file
+    text_file.close()
+
+# prints the same items that are in the file
 print()
 for item in to_write:
     print(item)
